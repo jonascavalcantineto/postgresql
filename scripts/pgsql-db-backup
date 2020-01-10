@@ -1,0 +1,51 @@
+#!/bin/bash
+##############################
+# Developer: Jonas Cavalcanti
+# ver 1.0                    
+##############################
+
+TIME=`date +%H:%M:%S`
+DATA=`date +%d-%m-%Y`
+DATA2=`date +%Y%j`
+DIR_BACKUP="/var/lib/postgresql/data/backups"
+LOG=${DIR_BACKUP}/pgsql-db-backup.log
+FILE_NAME_BACKUP="backup-database"
+ADM_EMAIL=adm@company.com
+SERVER=`hostname | tr [:lower:] [:upper:]`
+HOSTNAME=$1
+
+#Zera aqruivo de log
+touch $LOG
+> $LOG
+echo "--------------------${SERVER}--------------------" >> $LOG
+
+#Lista os Bancos Postgres e faz Dump
+for database in `psql -l -U postgres | cut -f 2 -d " " -s`
+do
+    if [ ${database} != "template1" -a ${database} != "template0" -a ${database} != "postgres" -a ${database} != "rows)" ]
+    then
+        su - postgres -c "vacuumdb -z -h localhost -U postgres ${database}" 
+        if [ $? = "0" ]
+        then
+            echo "[SUCCESS] - `date +%H:%M` - VACUUM ${database}"  >> $LOG
+            echo "[START BACKUP] - `date +%H:%M` -  ${database}" >> $LOG
+            if [ ${database} != "template1" -a ${database} != "template0" -a ${database} != "postgres" -a ${database} != "rows)" ]
+            then
+                su - postgres -c "pg_dump -F c  -f ${DIR_BACKUP}/${FILE_NAME_BACKUP}-${database}-${HOSTNAME}-${SERVER}-$DATA2-[$DATA].sql ${database}"
+                if [ $? = "0" ]
+                then
+                    echo "[SUCCESS] - `date +%H:%M` - BACKUP ${database}" >> $LOG
+                fi
+            fi
+        else
+            echo "[ERROR] -`date +%H:%M` - VACUUM da base ${database}" >> $LOG
+            exit 0
+        fi
+    fi
+done
+if [ $? = "0" ]
+then
+	cat $LOG |  mail -s "[SUCCESS] - `date +%H:%M` - BACKUP ${SERVER} " $ADM_EMAIL
+else
+	cat $LOG |  mail -s "[ERROR] - `date +%H:%M` - BACKUP ${SERVER} " $ADM_EMAIL
+fi

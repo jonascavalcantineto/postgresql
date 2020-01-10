@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+        containerName:
+                image: imageName
+                container_name: containerName
+                restart: always
+                hostname: containerName
+                network_mode: "bridge"
+                environment: 
+                        - DB_ENV=profile
+                ports:
+                        - 5433:5432
+                volumes:
+                        - /etice-data-local/databases/postgresql/profile/etice/data:/var/lib/postgresql/data

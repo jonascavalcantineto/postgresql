@@ -1,0 +1,26 @@
+#!/bin/bash
+if [ $# -ne 2 ]
+then
+echo  "###################################################################
+# Version Control 0.0.1 - 17/07/2006 (17:16)
+# Jonas Cavalcanti 
+# Backup Version Control
+#-----------------------------------------------------------------
+# Sintaxe: retencion-control [opt1] [opt2]
+# Sintaxe: retencion-control [path/file] [number files] 
+# Exemplo1: retencion-control </path/file> 3
+###################################################################" 
+
+else
+	TOTAL=`ls -1 $1* | wc -l`
+	HEAD=`expr $TOTAL - $2`
+        echo $HEAD | grep "-" > /dev/null
+        if [ $? = 0 ]; then
+         HEAD=0
+        fi
+
+	for arq in `ls -1 $1* | sort -n | head -n $HEAD`;
+	do
+		rm -rf $arq
+	done;
+fi
