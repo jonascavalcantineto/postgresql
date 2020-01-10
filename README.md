@@ -1,4 +1,4 @@
-# PostgreSQL ETICE
+# PostgreSQL Container
 
 ## Supported tags and respective Dockerfile links
 * v9.6
