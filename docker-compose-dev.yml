@@ -9,7 +9,7 @@ services:
                 environment: 
                         - BANCO_ENV=dev
                 ports:
-                        - 5433:5432
+                        - 5432:5432
                 volumes:
                         - ${HOME}/development/servers/databases/postgresql/data:/var/lib/postgresql/data
 
