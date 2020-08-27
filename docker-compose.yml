@@ -1,14 +1,16 @@
 version: "3.7"
 services:
-        containerName:
-                image: imageName
-                container_name: containerName
+        pgsql:
+                build: .
                 restart: always
-                hostname: containerName
+                container_name: pgsql
+                hostname: pgsql
                 network_mode: "bridge"
                 environment: 
-                        - DB_ENV=profile
+                        - BANCO_ENV=dev
                 ports:
-                        - 5433:5432
+                        - 5432:5432
                 volumes:
-                        - /etice-data-local/databases/postgresql/profile/etice/data:/var/lib/postgresql/data
+                        - ${HOME}/dev/servers/databases/postgresql/data:/var/lib/postgresql/data
+
+        
